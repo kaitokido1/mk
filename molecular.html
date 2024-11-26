@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الصيغة الجزيئية</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        .container {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+            margin: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #3498db;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>حاسبة الصيغة الجزيئية</h1>
+    <div class="container">
+        <form id="molecularForm">
+            <div class="form-group">
+                <label for="empiricalFormula">الصيغة الأولية:</label>
+                <input type="text" id="empiricalFormula" placeholder="أدخل الصيغة الأولية (مثل NaPO3)" required>
+            </div>
+            <div class="form-group">
+                <label for="molecularMass">الكتلة الجزيئية (g/mol):</label>
+                <input type="number" id="molecularMass" placeholder="أدخل الكتلة الجزيئية (مثل 305.8852)" required>
+            </div>
+            <button type="button" onclick="calculateMolecularFormula()">احسب الصيغة الجزيئية</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <footer>مصمم بحب لعلماء الكيمياء</footer>
+
+    <script>
+        async function calculateMolecularFormula() {
+            const empiricalFormula = document.getElementById("empiricalFormula").value.trim();
+            const molecularMass = parseFloat(document.getElementById("molecularMass").value);
+
+            if (!empiricalFormula || isNaN(molecularMass)) {
+                alert("يرجى إدخال الصيغة الأولية والكتلة الجزيئية");
+                return;
+            }
+
+            try {
+                // Replace the URL below with your PythonAnywhere web app URL
+                const response = await fetch(`https://hgdsfgfhsj.pythonanywhere.com//calculate-molecular-formula?empiricalFormula=${empiricalFormula}&molecularMass=${molecularMass}`);
+
+                
+                if (!response.ok) {
+                    throw new Error("حدث خطأ أثناء الحساب");
+                }
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Display the results
+                const resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = `
+                    <strong>الكتلة المولية للصيغة الأولية:</strong> ${data.empiricalMass} g/mol<br>
+                    <strong>الكتلة الجزيئية:</strong> ${data.molecularMass} g/mol<br>
+                    <strong>النسبة الجزيئية:</strong> ${data.ratio}<br>
+                    <strong>الصيغة الجزيئية:</strong> ${data.molecularFormula}
+                `;
+            } catch (error) {
+                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
+            }
+        }
+    </script>
+</body>
+</html>
